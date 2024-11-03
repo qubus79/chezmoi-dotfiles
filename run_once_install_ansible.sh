@@ -5,11 +5,30 @@ install_on_fedora() {
 }
 
 install_on_ubuntu() {
+    if command -v curl > /dev/null; then
+        sudo apt install curl
+    fi
+    if command -v brew > /dev/null; then
+        curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+        sudo apt-get install build-essential
+        brew install gcc
+    fi
+    # Install wezterm
+    curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /etc/apt/keyrings/wezterm-fury.gpg
+    echo 'deb [signed-by=/etc/apt/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
     sudo apt-get update
+    sudo install wezterm
+    # Install Ansible
     sudo apt-get install -y ansible
 }
 
 install_on_mac() {
+    if command -v brew > /dev/null; then
+        curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    fi
+    # Install wezterm
+    brew install wezterm
+    # Install Ansible
     brew install ansible
 }
 
@@ -34,8 +53,11 @@ case "${OS}" in
         ;;
 esac
 
+# Install tailscale
+#curl -fsSL https://tailscale.com/install.sh | sh
+# sudo tailscale up
 
+# Ansible playbook
 ## ansible-playbook ~/.bootstrap/setup.yml --ask-become-pass
 
 echo "Ansible installation complete."
-
